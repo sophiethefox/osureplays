@@ -1,0 +1,88 @@
+-------------------
+Page Design: *.png
+-------------------
+
+Data needed: 
+	* Beatmap ID: String
+	* Beatmap Title: String
+	* Beatmap Difficulty: String
+	* Star: Decimal
+	* Upload Date: Epoch timestamp
+	* Play Date: Epoch timestamp?
+	* Uploader: USER ID -> osu account connected to user who uploaded
+	* 300s: Number
+	* 100s: Number
+	* 50s: Number
+	* FC: Boolean
+	* PP: Number (If not calculable, allow user input, add note specifying if it was added by the user on replays)
+	* CustomPP: Boolean, ^
+	* Watch link: String?
+	* Duration: Number, Seconds.
+	* Password: String? Hashed
+	* Replay Code: String , UserID+BeatmapID+Incrementing Number (0)
+	* Path: UserID/BeatmapID/IncNum (starting at 0)
+	* Public: Boolean , Require account to view
+
+Users: 
+	[User]:
+		Replays:
+			[IDs : String]
+		Settings:
+			Display Name: String
+			osu ID: String
+			Default password: Hash
+			Public: Boolean		
+	...
+
+Replays:
+	[ID: UploaderID+BeatmapID+UploadDate]:
+		Password: Hash
+		Public: Boolean
+		Path: UploaderID/BeatmapID/UploadDate
+		Beatmap_ID: String
+		Beatmap_Title: String
+		Beatmap_Difficulty: String
+		Uploader: String
+		Upload_Date: epoch
+		Play_Date: epoch
+		Star: Decimal
+		Duration: Number
+		Accuracy: Decimal
+		300s: Number
+		100s: Number
+		50s: Number
+		FC: Boolean
+		PP: Decimal
+		CustomPP: Boolean
+		Pass: Boolean
+		Mods: []
+		Watch_Link: String
+	...
+
+-------
+EXAMPLE
+-------
+	{
+		"ID": "1564975528313621639918625",
+		"password": "b01967de6679050f5d41368161e0b808259bf79bf028e1ed9ff254aae4e59657",
+		"public": true,
+		"path": "15649755/2831362/1639918625",
+		"beatmap_ID": "2831362",
+		"beatmap_title": "CHiCO with HoneyWorks - Minikui Ikimono (TV Size)",
+		"beatmap_difficulty": "Unrequited Love",
+		"uploader": "15649755",
+		"upload_date": "1639918625",
+		"play_date": "1637326625",
+		"star": 6.07,
+		"duration": 97,
+		"accuracy": 96.18,
+		"300s": 20,
+		"100s": 10,
+		"50s": 1,
+		"fc": false,
+		"pp": 194,
+		"custom_pp": false,
+		"pass": true,
+		"mods": [],
+		"watch_link": null
+	}
