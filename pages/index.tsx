@@ -1,13 +1,15 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { IReplay } from "../models/Replay";
+import { getSession } from "next-auth/react";
 import Layout from "../components/Layout";
 
-export default function Home(): React.ReactElement {
+export default function Home({ session }): React.ReactElement {
 	const [code, setCode] = useState("");
 	const [replayFound, setReplayFound] = useState(false);
-	const [showAlert, setShowAlert] = useState(false);
+	const [showNoReplayAlert, setShowNoReplayAlert] = useState(false);
+	const [showPrivateReplayAlert, setShowPrivateReplayAlert] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [replayPassword, setReplayPassword] = useState("");
 
@@ -22,12 +24,17 @@ export default function Home(): React.ReactElement {
 				.then((replay: IReplay) => {
 					if (replay.error && replay.error != 200 && replay.error != 403) {
 						setReplayFound(false);
-						setShowAlert(true);
+						setShowNoReplayAlert(true);
 						return;
 					}
 
 					if (replay.error && replay.error == 403) {
 						setShowModal(true);
+						return;
+					}
+
+					if (!replay.public && !session) {
+						setShowPrivateReplayAlert(true);
 						return;
 					}
 
@@ -53,12 +60,20 @@ export default function Home(): React.ReactElement {
 	}
 
 	useEffect(() => {
-		if (showAlert) {
+		if (showNoReplayAlert) {
 			window.setTimeout(() => {
-				setShowAlert(false);
-			}, 2000);
+				setShowNoReplayAlert(false);
+			}, 3000);
 		}
-	}, [showAlert]);
+	}, [showNoReplayAlert]);
+
+	useEffect(() => {
+		if (showPrivateReplayAlert) {
+			window.setTimeout(() => {
+				setShowPrivateReplayAlert(false);
+			}, 3000);
+		}
+	}, [showPrivateReplayAlert]);
 
 	useEffect(() => {
 		if (!showModal) setReplayFound(false);
@@ -94,8 +109,12 @@ export default function Home(): React.ReactElement {
 				</Modal.Dialog>
 			)}
 
-			<Alert variant="danger" show={showAlert}>
+			<Alert variant="danger" show={showNoReplayAlert}>
 				Replay not found!
+			</Alert>
+
+			<Alert variant="danger" show={showPrivateReplayAlert}>
+				This replay is private. Please sign in to view.
 			</Alert>
 
 			<div>
@@ -110,4 +129,8 @@ export default function Home(): React.ReactElement {
 			</div>
 		</Layout>
 	);
+}
+
+export async function getServerSideProps(context) {
+	return { props: { session: await getSession(context) } };
 }

@@ -1,5 +1,15 @@
-import NextAuth from "next-auth";
+import NextAuth, { ISODateString, Session } from "next-auth";
 import OsuProvider from "next-auth/providers/osu";
+
+export interface ISession extends Record<string, unknown> {
+	user?: {
+		name?: string | null;
+		email?: string | null;
+		image?: string | null;
+		id?: string | null;
+	};
+	expires: ISODateString;
+}
 
 export default NextAuth({
 	providers: [
@@ -8,5 +18,11 @@ export default NextAuth({
 			clientSecret: process.env.OSU_SECRET
 		})
 	],
-	secret: process.env.SECRET
+	secret: process.env.SECRET,
+	callbacks: {
+		async session({ session, user, token }) {
+			(session as ISession).user.id = token.sub;
+			return session;
+		}
+	}
 });
