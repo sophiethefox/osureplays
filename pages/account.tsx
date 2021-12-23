@@ -2,13 +2,11 @@ import { getSession } from "next-auth/react";
 import { useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import Layout from "../components/Layout";
-import { IUser, User } from "../models/User";
+import { User } from "../models/User";
 import dbConnect from "../utils/dbConnect";
 import { ISession } from "./api/auth/[...nextAuth]";
 
 export default function Account({ session, user }): React.ReactElement {
-	// const { data: session } = useSession();
-
 	const [displayName, setDisplayName] = useState((session as ISession).user.name);
 
 	if (!session) {
