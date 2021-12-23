@@ -1,12 +1,13 @@
 import { getSession } from "next-auth/react";
 import Router from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, FormControl, InputGroup, ListGroup, OverlayTrigger, Popover, Table } from "react-bootstrap";
 import Layout from "../components/Layout";
 import { Replay } from "../models/Replay";
 import { User } from "../models/User";
 import dbConnect from "../utils/dbConnect";
 import { ISession } from "./api/auth/[...nextAuth]";
+import { useTable, useFilters, usePagination } from "react-table";
 
 const popover = (
 	<Popover>
@@ -28,37 +29,37 @@ const popover = (
 export default function Account({ session, user, replays }): React.ReactElement {
 	const [_replays, set_Replays] = useState(replays);
 	const [page, setPage] = useState(1); // Starts at 0, 0 already fetched in pre-render.
-	const [filter, setFilter] = useState("");
+	const [filterInput, setFilterInput] = useState("");
 
 	// TODO: Support title / diff filter.
-	// TODO: Table isnt updating. :(.
+	// Ah wait this only filters loaded results.
 	useEffect(() => {
 		var regex = /--(star|duration|accuracy|fc|pp|pass)(=|!=|<|>)(([+-]?([0-9]+\.?[0-9]*|\.[0-9]+))|true|false)/g;
 
 		var result;
-		while ((result = regex.exec(filter.toLowerCase())) !== null) {
+		while ((result = regex.exec(filterInput.toLowerCase())) !== null) {
 			var flag = result[1];
 			var operator = result[2];
 			var value = result[3];
 
 			switch (operator) {
 				case "=":
-					set_Replays(_replays.filter((replay) => replay[flag] == value));
+					set_Replays(replays.filter((replay) => replay[flag] == value));
 					break;
 				case "!=":
-					set_Replays(_replays.filter((replay) => replay[flag] != value));
+					set_Replays(replays.filter((replay) => replay[flag] != value));
 					break;
 				case "<":
-					set_Replays(_replays.filter((replay) => replay[flag] < value));
+					set_Replays(replays.filter((replay) => replay[flag] < value));
 					break;
 				case ">":
-					set_Replays(_replays.filter((replay) => replay[flag] > value));
+					set_Replays(replays.filter((replay) => replay[flag] > value));
 					break;
 			}
 		}
-	}, [filter]);
+	}, [filterInput]);
 
-	// TODO: pagination ,search
+	// TODO: pagination
 
 	return (
 		<Layout>
@@ -69,7 +70,7 @@ export default function Account({ session, user, replays }): React.ReactElement 
 					className="me-2"
 					aria-label="Search"
 					aria-describedby="description"
-					onChange={(e) => setFilter(e.target.value)}
+					onChange={(e) => setFilterInput(e.target.value)}
 				/>
 				<OverlayTrigger trigger="click" placement="right" overlay={popover}>
 					<Button id="description">?</Button>
@@ -90,7 +91,7 @@ export default function Account({ session, user, replays }): React.ReactElement 
 				<tbody>
 					{_replays.map((replay) => {
 						return (
-							<tr>
+							<tr key={replay.ID}>
 								<td
 									onClick={() => Router.push("/replay/" + replay.ID)}
 									style={{ textDecorationLine: "underline" }}
