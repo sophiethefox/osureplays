@@ -1,5 +1,5 @@
 import Router from "next/router";
-import { getSession } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { Button, FormControl, InputGroup, ListGroup, OverlayTrigger, Popover, Table } from "react-bootstrap";
 
@@ -26,7 +26,7 @@ const popover = (
 	</Popover>
 );
 
-export default function Account({ session, user, replays }): React.ReactElement {
+export default function Replays({ session, user, replays }): React.ReactElement {
 	const [_replays, set_Replays] = useState(replays);
 	const [page, setPage] = useState(1); // Starts at 0, 0 already fetched in pre-render.
 	const [filterInput, setFilterInput] = useState("");
@@ -116,25 +116,27 @@ export async function getServerSideProps(context) {
 	dbConnect(); // TODO: does this reconnect each time? idk
 
 	const session = await getSession(context);
-	var user;
+
+	var user: any = {};
+	var replays: any = {};
 
 	if (session) {
 		user = (await User.findOne({ ID: (session as ISession).user.id })).toJSON();
+		delete user._id;
+		replays = JSON.parse(
+			JSON.stringify(
+				await Replay.find({ uploader: (session as ISession).user.id })
+					.skip(0)
+					.limit(10)
+					.exec()
+			)
+		).map(({ password, ...keep }) => keep);
 	}
-
-	delete user._id;
 
 	// https://stackoverflow.com/questions/18133635/remove-property-for-all-objects-in-array
 	// .select("-password") is not working so lol
 
-	var replays = JSON.parse(
-		JSON.stringify(
-			await Replay.find({ uploader: (session as ISession).user.id })
-				.skip(0)
-				.limit(10)
-				.exec()
-		)
-	).map(({ password, ...keep }) => keep);
-
 	return { props: { session: session, user: user, replays: replays } };
 }
+
+Replays.auth = true;

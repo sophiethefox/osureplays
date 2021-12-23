@@ -10,14 +10,6 @@ import { ISession } from "./api/auth/[...nextauth]";
 export default function Account({ session, user }): React.ReactElement {
 	const [displayName, setDisplayName] = useState((session as ISession).user.name);
 
-	if (!session) {
-		return (
-			<Layout>
-				<h1>Not signed in!</h1>
-			</Layout>
-		);
-	}
-
 	return (
 		<Layout>
 			<Form>
@@ -42,13 +34,14 @@ export async function getServerSideProps(context) {
 	dbConnect(); // TODO: does this reconnect each time? idk
 
 	const session = await getSession(context);
-	var user;
+	var user: any = {};
 
 	if (session) {
 		user = (await User.findOne({ ID: (session as ISession).user.id })).toJSON();
+		delete user._id;
 	}
-
-	delete user._id;
 
 	return { props: { session: session, user: user } };
 }
+
+Account.auth = true;
