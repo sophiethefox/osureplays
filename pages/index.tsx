@@ -1,7 +1,7 @@
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Container, Form, Modal, Spinner } from "react-bootstrap";
 
 import Layout from "../components/Layout";
 import { IReplay } from "../models/Replay";
@@ -82,6 +82,21 @@ export default function Home({ session }): React.ReactElement {
 
 	return (
 		<Layout>
+			{!showModal && replayFound && (
+				<Container
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						position: "fixed",
+						width: "100%",
+						height: "100%"
+					}}
+				>
+					<Spinner animation="border" />
+				</Container>
+			)}
+
 			{showModal && (
 				<Modal.Dialog centered>
 					<Modal.Header>
