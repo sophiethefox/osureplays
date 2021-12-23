@@ -8,6 +8,7 @@ import Layout from "../components/Layout";
 import { Replay } from "../models/Replay";
 import dbConnect from "../utils/dbConnect";
 import { ISession } from "./api/auth/[...nextauth]";
+import Pagination from "react-bootstrap/Pagination";
 
 const popover = (
 	<Popover>
@@ -28,7 +29,7 @@ const popover = (
 
 export default function Replays({ session, user, replays }): React.ReactElement {
 	const [_replays, set_Replays] = useState(replays);
-	const [page, setPage] = useState(1); // Starts at 0, 0 already fetched in pre-render.
+	const [page, setPage] = useState(1);
 	const [filterInput, setFilterInput] = useState("");
 
 	// TODO: Support title / diff filter.
@@ -89,7 +90,7 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 					</tr>
 				</thead>
 				<tbody>
-					{_replays.map((replay) => {
+					{_replays.slice((page - 1) * 10, page * 10).map((replay) => {
 						return (
 							<tr key={replay.ID}>
 								<td
@@ -108,6 +109,24 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 					})}
 				</tbody>
 			</Table>
+
+			<Pagination>
+				<Pagination.First disabled={page <= 2} onClick={() => setPage(1)} />
+
+				<Pagination.Prev disabled={page <= 1} onClick={() => setPage(page - 1)} />
+
+				{page > 1 && <Pagination.Item onClick={() => setPage(page - 1)}>{page - 1}</Pagination.Item>}
+				<Pagination.Item>{page}</Pagination.Item>
+				{_replays.length > page * 10 && (
+					<Pagination.Item onClick={() => setPage(page + 1)}>{page + 1}</Pagination.Item>
+				)}
+
+				<Pagination.Next disabled={_replays.length < page * 10 + 1} onClick={() => setPage(page + 1)} />
+				<Pagination.Last
+					disabled={_replays.length < (page + 1) * 10 + 1}
+					onClick={() => setPage(Math.ceil(_replays / 10))}
+				/>
+			</Pagination>
 		</Layout>
 	);
 }
@@ -123,14 +142,9 @@ export async function getServerSideProps(context) {
 	if (session) {
 		user = (await User.findOne({ ID: (session as ISession).user.id })).toJSON();
 		delete user._id;
-		replays = JSON.parse(
-			JSON.stringify(
-				await Replay.find({ uploader: (session as ISession).user.id })
-					.skip(0)
-					.limit(10)
-					.exec()
-			)
-		).map(({ password, ...keep }) => keep);
+		replays = JSON.parse(JSON.stringify(await Replay.find({ uploader: (session as ISession).user.id }))).map(
+			({ password, ...keep }) => keep
+		);
 	}
 
 	// https://stackoverflow.com/questions/18133635/remove-property-for-all-objects-in-array
