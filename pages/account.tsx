@@ -15,7 +15,7 @@ export default function Account({ session, user }): React.ReactElement {
 			<Form>
 				<Form.Group as={Row} className="mb-3" controlId="displayName">
 					<Form.Label column sm="2">
-						Display Name
+						Display Name:
 					</Form.Label>
 					<Col sm="10">
 						<Form.Control
@@ -23,6 +23,14 @@ export default function Account({ session, user }): React.ReactElement {
 							value={displayName || user.display_name}
 							onChange={(e) => setDisplayName(e.target.value)}
 						/>
+					</Col>
+				</Form.Group>
+				<Form.Group as={Row} className="mb-3" controlId="osuProfile">
+					<Form.Label column sm="2">
+						osu! Profile:
+					</Form.Label>
+					<Col>
+						<a href={"https://osu.ppy.sh/users/" + session.user.id}>{session.user.name}</a>
 					</Col>
 				</Form.Group>
 			</Form>
