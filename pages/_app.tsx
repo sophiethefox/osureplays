@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { SessionProvider } from "next-auth/react";
 import { SSRProvider } from "react-bootstrap";
+import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps }) {
 	return (

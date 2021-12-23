@@ -1,8 +1,8 @@
-import { NextApiResponse } from "next";
-import { NextApiRequest } from "next";
 import { getSession } from "next-auth/react";
+import { NextApiResponse, NextApiRequest } from "next";
+
 import { Replay } from "../../../models/Replay";
-import { ISession } from "../auth/[...nextAuth]";
+import { ISession } from "../auth/[...nextauth]";
 // /api/replays/
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

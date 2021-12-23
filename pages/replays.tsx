@@ -1,13 +1,13 @@
-import { getSession } from "next-auth/react";
 import Router from "next/router";
+import { getSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { Button, FormControl, InputGroup, ListGroup, OverlayTrigger, Popover, Table } from "react-bootstrap";
+
+import { User } from "../models/User";
 import Layout from "../components/Layout";
 import { Replay } from "../models/Replay";
-import { User } from "../models/User";
 import dbConnect from "../utils/dbConnect";
-import { ISession } from "./api/auth/[...nextAuth]";
-import { useTable, useFilters, usePagination } from "react-table";
+import { ISession } from "./api/auth/[...nextauth]";
 
 const popover = (
 	<Popover>
@@ -32,7 +32,7 @@ export default function Account({ session, user, replays }): React.ReactElement 
 	const [filterInput, setFilterInput] = useState("");
 
 	// TODO: Support title / diff filter.
-	// Ah wait this only filters loaded results.
+	// TODO: Ah wait this only filters loaded results.
 	useEffect(() => {
 		var regex = /--(star|duration|accuracy|fc|pp|pass)(=|!=|<|>)(([+-]?([0-9]+\.?[0-9]*|\.[0-9]+))|true|false)/g;
 

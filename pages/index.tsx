@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
 import Router from "next/router";
-import { Alert, Button, Form, Modal } from "react-bootstrap";
-import { IReplay } from "../models/Replay";
+import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
+
 import Layout from "../components/Layout";
+import { IReplay } from "../models/Replay";
 
 export default function Home({ session }): React.ReactElement {
 	const [code, setCode] = useState("");

@@ -1,5 +1,5 @@
-import NextAuth, { ISODateString, Session } from "next-auth";
 import OsuProvider from "next-auth/providers/osu";
+import NextAuth, { ISODateString } from "next-auth";
 
 export interface ISession extends Record<string, unknown> {
 	user?: {

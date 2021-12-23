@@ -1,14 +1,14 @@
-import dbConnect from "../../../../utils/dbConnect";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { User } from "../../../../models/User";
-import { Replay } from "../../../../models/Replay";
-import { createHash } from "crypto";
-
 import fs from "fs";
 import path from "path";
+import type { NextApiRequest, NextApiResponse } from "next";
+
 import hash from "../../../../utils/Hash";
+import { Replay } from "../../../../models/Replay";
+import dbConnect from "../../../../utils/dbConnect";
 
 dbConnect();
+
+// TODO: improve idk
 
 // fetch("http://localhost:3000/api/replays/1564975528313621639918625", {headers:{'Authorization': 'Basic ' +btoa('regex:password')}})
 /*

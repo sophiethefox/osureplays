@@ -1,7 +1,8 @@
-import { IReplay } from "../../models/Replay";
 import { Row } from "react-bootstrap";
-import Layout from "../../components/Layout";
 import { getSession } from "next-auth/react";
+
+import Layout from "../../components/Layout";
+import { IReplay } from "../../models/Replay";
 
 export default function Code({ replay, session }): React.ReactElement {
 	return (
