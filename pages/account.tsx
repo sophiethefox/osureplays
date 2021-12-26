@@ -9,23 +9,9 @@ import { ISession } from "./api/auth/[...nextauth]";
 
 // what is user lol i forgot my own code that fast
 export default function Account({ session, user }: { session: ISession; user: any }): React.ReactElement {
-	const [displayName, setDisplayName] = useState(session.user.name);
-
 	return (
 		<Layout>
 			<Form>
-				<Form.Group as={Row} className="mb-3" controlId="displayName">
-					<Form.Label column sm="2">
-						Display Name:
-					</Form.Label>
-					<Col sm="10">
-						<Form.Control
-							type="text"
-							value={displayName || user.display_name}
-							onChange={(e) => setDisplayName(e.target.value)}
-						/>
-					</Col>
-				</Form.Group>
 				<Form.Group as={Row} className="mb-3" controlId="osuProfile">
 					<Form.Label column sm="2">
 						osu! Profile:

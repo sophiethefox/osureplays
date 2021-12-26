@@ -2,7 +2,7 @@ import mongoose, { model } from "mongoose";
 
 export interface IUser extends mongoose.Document {
 	ID: String;
-	display_name: String;
+	osu_username: String;
 	replays: String[];
 }
 
@@ -12,7 +12,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema({
 		required: [true, "Add ID"],
 		unique: true
 	},
-	display_name: {
+	osu_username: {
 		type: String
 	},
 	replays: [{ type: String }]
