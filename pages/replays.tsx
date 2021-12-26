@@ -132,7 +132,7 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 }
 
 export async function getServerSideProps(context) {
-	dbConnect(); // TODO: does this reconnect each time? idk
+	await dbConnect();
 
 	const session = await getSession(context);
 

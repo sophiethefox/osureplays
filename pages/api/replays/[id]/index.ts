@@ -6,8 +6,6 @@ import hash from "../../../../utils/Hash";
 import { Replay } from "../../../../models/Replay";
 import dbConnect from "../../../../utils/dbConnect";
 
-dbConnect();
-
 // TODO: improve idk
 
 // fetch("http://localhost:3000/api/replays/1564975528313621639918625", {headers:{'Authorization': 'Basic ' +btoa('regex:password')}})
@@ -20,6 +18,8 @@ dbConnect();
 	});
 */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+	await dbConnect();
+
 	const { id } = req.query;
 	const method = req.method;
 

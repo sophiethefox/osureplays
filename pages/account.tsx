@@ -39,7 +39,7 @@ export default function Account({ session, user }): React.ReactElement {
 }
 
 export async function getServerSideProps(context) {
-	dbConnect(); // TODO: does this reconnect each time? idk
+	await dbConnect(); // TODO: does this reconnect each time? idk
 
 	const session = await getSession(context);
 	var user: any = {};

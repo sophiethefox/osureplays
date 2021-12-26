@@ -43,6 +43,8 @@ export default function Code({ replay, session }): React.ReactElement {
 // https://nextjs.org/docs/basic-features/data-fetching#:~:text=Note%3A%20You%20should%20not%20use%20fetch()%20to%20call%20an%20API%20route%20in%20getServerSideProps.%20Instead%2C%20directly%20import%20the%20logic%20used%20inside%20your%20API%20route.%20You%20may%20need%20to%20slightly%20refactor%20your%20code%20for%20this%20approach.
 // lmao
 export async function getServerSideProps(context) {
+	const session = await getSession(context);
+
 	const { code, password } = context.query;
 
 	const res = await fetch(`http://localhost:3000/api/replays/${code}`, {
@@ -56,8 +58,8 @@ export async function getServerSideProps(context) {
 	const data = await res.json();
 
 	if (data.error && data.error == 403) {
-		return { props: { replay: { error: 403 } } };
+		return { props: { replay: { error: 403 }, session: {} } };
 	}
 
-	return { props: { replay: data, session: await getSession(context) } };
+	return { props: { replay: data, session: session } };
 }
