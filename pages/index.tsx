@@ -18,6 +18,8 @@ export default function Home({ session }): React.ReactElement {
 		if (event.key === "Enter") {
 			if (code.length == 0) return;
 
+			if (!/^[0-9]+$/.test(code)) return;
+
 			setReplayFound(true);
 
 			fetch(`http://localhost:3000/api/replays/${code}`)

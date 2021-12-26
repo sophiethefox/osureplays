@@ -21,43 +21,41 @@ export default function Layout({ children }) {
 				<title>osu! Replays</title>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<body>
-				<Container style={{ borderBottom: "1px solid #E7E7E7" }}>
-					<Navbar>
-						<Container fluid>
-							<Nav>
-								<Nav.Link href="/"> Home </Nav.Link>
-								{session && <Nav.Link href="/upload"> Upload </Nav.Link>}
-							</Nav>
+			<Container style={{ borderBottom: "1px solid #E7E7E7" }}>
+				<Navbar>
+					<Container fluid>
+						<Nav>
+							<Nav.Link href="/"> Home </Nav.Link>
+							{session && <Nav.Link href="/upload"> Upload </Nav.Link>}
+						</Nav>
 
-							{session ? (
-								<NavDropdown title={session.user.name} className="d-flex">
-									<NavDropdown.Item href="/account">Account</NavDropdown.Item>
-									<NavDropdown.Item href="/replays">Replays</NavDropdown.Item>
-									<NavDropdown.Divider />
-									<NavDropdown.Item onClick={() => signOut()} style={{ color: "red" }}>
-										Sign Out
-									</NavDropdown.Item>
-								</NavDropdown>
-							) : (
-								<Navbar.Collapse className="justify-content-end">
-									<Navbar.Text>
-										<Nav.Link onClick={() => signIn()}>Sign In</Nav.Link>
-									</Navbar.Text>
-								</Navbar.Collapse>
-							)}
-						</Container>
-					</Navbar>
-				</Container>
+						{session ? (
+							<NavDropdown title={session.user.name} className="d-flex">
+								<NavDropdown.Item href="/account">Account</NavDropdown.Item>
+								<NavDropdown.Item href="/replays">Replays</NavDropdown.Item>
+								<NavDropdown.Divider />
+								<NavDropdown.Item onClick={() => signOut()} style={{ color: "red" }}>
+									Sign Out
+								</NavDropdown.Item>
+							</NavDropdown>
+						) : (
+							<Navbar.Collapse className="justify-content-end">
+								<Navbar.Text>
+									<Nav.Link onClick={() => signIn()}>Sign In</Nav.Link>
+								</Navbar.Text>
+							</Navbar.Collapse>
+						)}
+					</Container>
+				</Navbar>
+			</Container>
 
-				<br />
+			<br />
 
-				<Container>{children}</Container>
+			<Container>{children}</Container>
 
-				<footer style={footerStyle}>
-					<Link href="/about">About</Link>
-				</footer>
-			</body>
+			<footer style={footerStyle}>
+				<Link href="/about">About</Link>
+			</footer>
 		</>
 	);
 }
