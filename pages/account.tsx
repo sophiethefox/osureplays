@@ -7,8 +7,9 @@ import Layout from "../components/Layout";
 import dbConnect from "../utils/dbConnect";
 import { ISession } from "./api/auth/[...nextauth]";
 
-export default function Account({ session, user }): React.ReactElement {
-	const [displayName, setDisplayName] = useState((session as ISession).user.name);
+// what is user lol i forgot my own code that fast
+export default function Account({ session, user }: { session: ISession; user: any }): React.ReactElement {
+	const [displayName, setDisplayName] = useState(session.user.name);
 
 	return (
 		<Layout>
@@ -41,11 +42,11 @@ export default function Account({ session, user }): React.ReactElement {
 export async function getServerSideProps(context) {
 	await dbConnect(); // TODO: does this reconnect each time? idk
 
-	const session = await getSession(context);
+	const session: ISession | null = await getSession(context);
 	var user: any = {};
 
 	if (session) {
-		user = (await User.findOne({ ID: (session as ISession).user.id })).toJSON();
+		user = (await User.findOne({ ID: session.user.id })).toJSON();
 		delete user._id;
 	}
 

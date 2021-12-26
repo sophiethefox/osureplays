@@ -6,7 +6,7 @@ import { ISession } from "../auth/[...nextauth]";
 // /api/replays/
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const session = await getSession({ req });
+	const session: ISession | null = await getSession({ req });
 	if (!session) {
 		res.status(401).json({ error: 401 });
 
@@ -20,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	// .select("-password") is not working so lol
 	var replays = JSON.parse(
 		JSON.stringify(
-			await Replay.find({ uploader: (session as ISession).user.id })
+			await Replay.find({ uploader: session.user.id })
 				.skip(page * limit)
 				.limit(limit)
 				.exec()

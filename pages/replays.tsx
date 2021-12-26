@@ -134,15 +134,15 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 export async function getServerSideProps(context) {
 	await dbConnect();
 
-	const session = await getSession(context);
+	const session: ISession | null = await getSession(context);
 
 	var user: any = {};
 	var replays: any = {};
 
 	if (session) {
-		user = (await User.findOne({ ID: (session as ISession).user.id })).toJSON();
+		user = (await User.findOne({ ID: session.user.id })).toJSON();
 		delete user._id;
-		replays = JSON.parse(JSON.stringify(await Replay.find({ uploader: (session as ISession).user.id }))).map(
+		replays = JSON.parse(JSON.stringify(await Replay.find({ uploader: session.user.id }))).map(
 			({ password, ...keep }) => keep
 		);
 	}

@@ -3,8 +3,9 @@ import { getSession } from "next-auth/react";
 
 import Layout from "../../components/Layout";
 import { IReplay } from "../../models/Replay";
+import { ISession } from "../api/auth/[...nextauth]";
 
-export default function Code({ replay, session }): React.ReactElement {
+export default function Code({ replay, session }: { replay: IReplay; session: ISession }): React.ReactElement {
 	return (
 		<>
 			{replay.error == 403 ? (
@@ -15,25 +16,45 @@ export default function Code({ replay, session }): React.ReactElement {
 						<h4>
 							Beatmap:{" "}
 							<span style={{ color: "gray" }}>
-								{(replay as IReplay).beatmap_title} [{(replay as IReplay).beatmap_difficulty}]
+								{replay.beatmap_title} [{replay.beatmap_difficulty}]
 							</span>
 						</h4>
 					</Row>
 					<Row>
 						<h4>
-							Uploaded by: <span style={{ color: "gray" }}>{(replay as IReplay).uploader}</span>
+							Uploaded by: <span style={{ color: "gray" }}>{replay.uploader}</span>
 						</h4>
 					</Row>
 					<Row>
 						<h4>
-							Star: <span style={{ color: "gray" }}>{(replay as IReplay).star}</span>
+							Star: <span style={{ color: "gray" }}>{replay.star}</span>
 						</h4>
 					</Row>
 					<Row>
 						<h4>
-							Accuracy: <span style={{ color: "gray" }}>{(replay as IReplay).accuracy}%</span>
+							Accuracy:{" "}
+							<span style={{ color: "gray" }}>
+								{replay.accuracy}% | {replay._300s} {replay._100s} {replay._50s} {replay.misses}
+							</span>
 						</h4>
 					</Row>
+					<Row>
+						<h4>
+							PP: <span style={{ color: "gray" }}>{replay.pp}%</span>
+						</h4>
+					</Row>
+					<Row>
+						<h4>
+							Duration: <span style={{ color: "gray" }}>{replay.duration}%</span>
+						</h4>
+					</Row>
+					{replay.watch_link.length > 0 && (
+						<Row>
+							<h4>
+								Watch: <span style={{ color: "gray" }}>{replay.watch_link}%</span>
+							</h4>
+						</Row>
+					)}
 				</Layout>
 			)}
 		</>
@@ -58,7 +79,7 @@ export async function getServerSideProps(context) {
 	const data = await res.json();
 
 	if (data.error && data.error == 403) {
-		return { props: { replay: { error: 403 }, session: {} } };
+		return { props: { replay: { error: 403 }, session: null } };
 	}
 
 	return { props: { replay: data, session: session } };

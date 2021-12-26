@@ -17,6 +17,7 @@ export interface IReplay extends mongoose.Document {
 	_300s: Number;
 	_100s: Number;
 	_50s: Number;
+	misses: Number;
 	fc: Boolean;
 	pp: Number;
 	custom_pp: Boolean;
@@ -88,6 +89,10 @@ const ReplaySchema: mongoose.Schema = new mongoose.Schema({
 		required: true
 	},
 	_50s: {
+		type: Number,
+		required: true
+	},
+	misses: {
 		type: Number,
 		required: true
 	},

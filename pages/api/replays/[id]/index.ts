@@ -17,6 +17,9 @@ import dbConnect from "../../../../utils/dbConnect";
 		window.location.assign(file);
 	});
 */
+
+//TODO: shud probs salt
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	await dbConnect();
 
