@@ -2,10 +2,12 @@ import { Button, Row } from "react-bootstrap";
 import { getSession } from "next-auth/react";
 
 import Layout from "../../components/Layout";
-import { IReplay } from "../../models/Replay";
+import { IReplay, Replay } from "../../models/Replay";
 import { ISession } from "../api/auth/[...nextauth]";
 import { IUser, User } from "../../models/User";
 import { userInfo } from "os";
+import dbConnect from "../../utils/dbConnect";
+import hash from "../../utils/Hash";
 
 export default function Code({
 	replay,
@@ -18,8 +20,8 @@ export default function Code({
 }): React.ReactElement {
 	return (
 		<>
-			{replay.error == 403 ? (
-				<h1>Incorrect Password</h1>
+			{replay.error == 403 || replay.error == 404 ? (
+				<h1>Replay does not exist or incorrect password</h1>
 			) : (
 				<Layout>
 					<Row>
@@ -78,32 +80,31 @@ export default function Code({
 	);
 }
 
-// https://nextjs.org/docs/basic-features/data-fetching#:~:text=Note%3A%20You%20should%20not%20use%20fetch()%20to%20call%20an%20API%20route%20in%20getServerSideProps.%20Instead%2C%20directly%20import%20the%20logic%20used%20inside%20your%20API%20route.%20You%20may%20need%20to%20slightly%20refactor%20your%20code%20for%20this%20approach.
-// lmao
 export async function getServerSideProps(context) {
-	const session = await getSession(context);
+	await dbConnect();
+	const session: ISession | null = await getSession(context);
 
 	const { code, password } = context.query;
 
-	const res = await fetch(`http://localhost:3000/api/replays/${code}`, {
-		method: "GET",
-		headers: {
-			Accept: "application/json",
-			Authorization: `${password}`
+	var replay = await Replay.findOne({ ID: code });
+
+	if (!replay) return { props: { replay: { error: 404 }, session: session, uploader: null } };
+
+	replay = JSON.parse(JSON.stringify(replay));
+	// JSON cant be serealised, delete _id not working??
+
+	var uploader: IUser | null = await User.findOne({ ID: replay.uploader });
+
+	if (session) {
+		if (session.user.id == replay.uploader)
+			return { props: { replay: replay, session: session, uploader: uploader.osu_username } };
+	}
+
+	if (replay.password.length > 0) {
+		if (!password || hash(password) !== replay.password) {
+			return { props: { replay: { error: 403 }, session: session, uploader: null } };
 		}
-	});
-
-	const data = await res.json();
-
-	if (data.error && data.error == 403) {
-		return { props: { replay: { error: 403 }, session: session, uploader: null } };
 	}
 
-	var uploader: IUser | null = await User.findOne({ ID: data.uploader });
-
-	if (!uploader) {
-		return { props: { replay: data, session: session, uploader: null } };
-	}
-
-	return { props: { replay: data, session: session, uploader: uploader.osu_username } };
+	return { props: { replay: replay, session: session, uploader: uploader.osu_username } };
 }

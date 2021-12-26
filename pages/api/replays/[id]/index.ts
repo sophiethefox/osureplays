@@ -1,3 +1,4 @@
+import { ISession } from "./../../auth/[...nextauth]";
 import fs from "fs";
 import path from "path";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -5,6 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import hash from "../../../../utils/Hash";
 import { Replay } from "../../../../models/Replay";
 import dbConnect from "../../../../utils/dbConnect";
+import { getSession } from "next-auth/react";
 
 // TODO: improve idk
 
@@ -19,22 +21,27 @@ import dbConnect from "../../../../utils/dbConnect";
 */
 
 //TODO: shud probs salt
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	await dbConnect();
+	const session: ISession | null = await getSession({ req }); // ah this is being fetched without setting cookies and stuff
 
 	const { id } = req.query;
 	const method = req.method;
+	await dbConnect();
 
 	if (method === "GET") {
 		try {
-			// console.log("id " + id);
-
 			const replay = await Replay.findOne({ ID: id });
 
 			if (!replay) {
 				res.status(404).json({ error: 404 });
 				return;
+			}
+
+			if (session) {
+				if (replay.uploader === session.user.id) {
+					res.status(200).json(replay);
+					return;
+				}
 			}
 
 			if (replay.password.length > 0) {
