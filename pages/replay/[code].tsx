@@ -8,16 +8,21 @@ import { IUser, User } from "../../models/User";
 import { userInfo } from "os";
 import dbConnect from "../../utils/dbConnect";
 import hash from "../../utils/Hash";
+import { useRouter } from "next/router";
 
 export default function Code({
 	replay,
 	session,
-	uploader
+	uploader,
+	password
 }: {
 	replay: IReplay;
 	session: ISession;
 	uploader: string;
+	password: string | null;
 }): React.ReactElement {
+	const router = useRouter();
+
 	return (
 		<>
 			{replay.error == 403 || replay.error == 404 ? (
@@ -73,7 +78,18 @@ export default function Code({
 						</Row>
 					)}
 
-					<Button size="lg">Download</Button>
+					<Button
+						onClick={() =>
+							router.push(
+								`/api/replays/${replay.ID}/download${
+									password || password.length > 0 ? `?password=${password}` : ""
+								}`
+							)
+						}
+						size="lg"
+					>
+						Download
+					</Button>
 				</Layout>
 			)}
 		</>
@@ -90,22 +106,25 @@ export async function getServerSideProps(context) {
 
 	if (!replay) return { props: { replay: { error: 404 }, session: session, uploader: null } };
 
-	replay = JSON.parse(JSON.stringify(replay));
 	// JSON cant be serealised, delete _id not working??
+	replay = JSON.parse(JSON.stringify(replay));
+
+	const replayPassword = replay.password;
+	replay.password = "";
 
 	var uploader: IUser | null = await User.findOne({ ID: replay.uploader });
 
 	// TODO: Check public...
 	if (session) {
 		if (session.user.id == replay.uploader)
-			return { props: { replay: replay, session: session, uploader: uploader.osu_username } };
+			return { props: { replay: replay, session: session, uploader: uploader.osu_username, password: null } };
 	}
 
-	if (replay.password.length > 0) {
-		if (!password || hash(password) !== replay.password) {
-			return { props: { replay: { error: 403 }, session: session, uploader: null } };
+	if (replayPassword.length > 0) {
+		if (!password || hash(password) !== replayPassword) {
+			return { props: { replay: { error: 403 }, session: session, uploader: null, password: null } };
 		}
 	}
 
-	return { props: { replay: replay, session: session, uploader: uploader.osu_username } };
+	return { props: { replay: replay, session: session, uploader: uploader.osu_username, password: password } };
 }
