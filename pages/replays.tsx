@@ -82,6 +82,7 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 				<thead>
 					<tr>
 						<th>Title</th>
+						<th>Date Achieved</th>
 						<th>Star</th>
 						<th>Accuracy</th>
 						<th>FC</th>
@@ -99,6 +100,7 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 								>
 									{replay.beatmap_title} [{replay.beatmap_difficulty}]
 								</td>
+								<td>{new Date(replay.play_date).toLocaleString() /*Windows Ticks*/}</td>
 								<td>{replay.star}*</td>
 								<td>{replay.accuracy}%</td>
 								<td>{replay.fc ? "/" : "X"}</td>
