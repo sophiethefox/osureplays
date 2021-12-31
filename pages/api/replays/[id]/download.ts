@@ -23,8 +23,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return;
 	}
 
-	const replayPassword = replay.password;
-	replay.password = "";
+	const replayPassword = replay.password || "";
+	replay.password = null;
 
 	if (session) {
 		if (replay.uploader === session.user.id) {
@@ -39,8 +39,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	if (!replay.public) {
-		// TODO: Check if user signed in
-		console.log("Not public");
+		if (!session) {
+			res.status(403).json({ error: 403, message: "Replay not public. Please sign in." });
+			return;
+		}
 	}
 
 	var password: string = "";

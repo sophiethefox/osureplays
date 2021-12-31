@@ -25,7 +25,7 @@ export default function Home({ session }): React.ReactElement {
 			fetch(`http://localhost:3000/api/replays/${code}`)
 				.then((res) => res.json())
 				.then((replay: IReplay) => {
-					if (replay.error && replay.error != 200 && replay.error != 403) {
+					if (replay.error && replay.error == 404) {
 						setReplayFound(false);
 						setShowNoReplayAlert(true);
 						return;

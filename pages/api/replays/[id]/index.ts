@@ -22,8 +22,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return;
 	}
 
-	const replayPassword = replay.password;
-	replay.password = "";
+	const replayPassword = replay.password || "";
+	replay.password = null;
 
 	if (session) {
 		if (replay.uploader === session.user.id) {
@@ -33,8 +33,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	if (!replay.public) {
-		// TODO: Check if user signed in
-		console.log("Not public");
+		if (!session) {
+			res.status(401).json({ error: 401, message: "Replay not public. Please sign in." });
+			return;
+		}
 	}
 
 	// This api route is only ever accessed from the home page where all it needs to do is *check* if there is a password.
