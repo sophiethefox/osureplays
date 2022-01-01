@@ -5,7 +5,6 @@ import Layout from "../../components/Layout";
 import { IReplay, Replay } from "../../models/Replay";
 import { ISession } from "../api/auth/[...nextauth]";
 import { IUser, User } from "../../models/User";
-import { userInfo } from "os";
 import dbConnect from "../../utils/dbConnect";
 import hash from "../../utils/Hash";
 import { useRouter } from "next/router";
@@ -101,7 +100,7 @@ export default function Code({
 					onClick={() =>
 						router.push(
 							`/api/replays/${replay.ID}/download${
-								password || password.length > 0 ? `?password=${password}` : ""
+								password && password.length > 0 ? `?password=${password}` : ""
 							}`
 						)
 					}

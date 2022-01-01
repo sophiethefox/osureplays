@@ -1,4 +1,3 @@
-import { signIn } from "next-auth/react";
 import OsuProvider from "next-auth/providers/osu";
 import NextAuth, { ISODateString } from "next-auth";
 import { User } from "../../../models/User";
@@ -12,17 +11,29 @@ export interface ISession extends Record<string, unknown> {
 		id?: string | null;
 	};
 	expires: ISODateString;
+	accessToken?: string | null;
 }
 
 export default NextAuth({
 	providers: [
 		OsuProvider({
 			clientId: process.env.OSU_ID,
-			clientSecret: process.env.OSU_SECRET
+			clientSecret: process.env.OSU_SECRET,
+			authorization: {
+				params: {
+					scope: "identify public"
+				}
+			}
 		})
 	],
 	secret: process.env.SECRET,
 	callbacks: {
+		async jwt({ token, user, account }) {
+			if (account) {
+				token.accessToken = account?.access_token;
+			}
+			return token;
+		},
 		async signIn({ user, account, profile, email }) {
 			await dbConnect();
 
@@ -39,6 +50,8 @@ export default NextAuth({
 		},
 		async session({ session, user, token }) {
 			(session as ISession).user.id = token.sub;
+			session.accessToken = token.accessToken;
+
 			return session;
 		}
 	}

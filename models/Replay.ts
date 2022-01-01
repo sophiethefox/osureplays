@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export interface IReplay extends mongoose.Document {
 	ID: String;
 	password: String;
-	public: String;
+	public: boolean;
 	path: String;
 	beatmap_ID: String;
 	beatmap_title: String;
