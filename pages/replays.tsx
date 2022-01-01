@@ -33,7 +33,8 @@ export default function Replays({ session, user, replays }): React.ReactElement 
 	const [filterInput, setFilterInput] = useState("");
 
 	// TODO: Support title / diff filter.
-	// TODO: Ah wait this only filters loaded results.
+	// TODO: Ah wait this only filters loaded results..... or does it?
+
 	useEffect(() => {
 		var regex = /--(star|duration|accuracy|fc|pp|pass)(=|!=|<|>)(([+-]?([0-9]+\.?[0-9]*|\.[0-9]+))|true|false)/g;
 
