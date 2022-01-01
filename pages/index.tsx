@@ -41,8 +41,6 @@ export default function Home({ session }): React.ReactElement {
 						return;
 					}
 
-					// TODO: Handle public check
-
 					Router.push("/replay/" + code);
 				});
 		}

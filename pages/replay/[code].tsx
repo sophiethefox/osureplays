@@ -131,7 +131,6 @@ export async function getServerSideProps(context) {
 
 	var uploader: IUser | null = await User.findOne({ ID: replay.uploader });
 
-	// TODO: Check public...
 	if (session) {
 		if (session.user.id == replay.uploader)
 			return { props: { replay: replay, session: session, uploader: uploader.osu_username, password: null } };

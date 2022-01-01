@@ -26,7 +26,7 @@ export default function Account({ session, user }: { session: ISession; user: an
 }
 
 export async function getServerSideProps(context) {
-	await dbConnect(); // TODO: does this reconnect each time? idk
+	await dbConnect();
 
 	const session: ISession | null = await getSession(context);
 	var user: any = {};
