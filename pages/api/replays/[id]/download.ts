@@ -6,13 +6,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "../../../../utils/dbConnect";
 import { getSession } from "next-auth/react";
 
-import fs from "fs";
-import path from "path";
 import hash from "../../../../utils/Hash";
+import { getClient, storageConnect } from "../../../../utils/storageConnect";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const session: ISession | null = await getSession({ req });
 	await dbConnect();
+	await storageConnect();
+	const client = await getClient();
 
 	const { id } = req.query;
 
@@ -28,8 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 	if (session) {
 		if (replay.uploader === session.user.id) {
-			const filePath = path.resolve(".", "replays/" + id + ".osr");
-			const fileBuffer = fs.readFileSync(filePath);
+			const fileBuffer = await client.get(`./replays/${id}.osr`);
 			res.setHeader("Content-Type", "x-osu-replay");
 			res.setHeader("Content-disposition", `attachment; filename=${id}.osr`);
 			res.send(fileBuffer);
@@ -64,8 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 	}
 
-	const filePath = path.resolve(".", "replays/" + id + ".osr");
-	const fileBuffer = fs.readFileSync(filePath);
+	const fileBuffer = await client.get(`./replays/${id}.osr`);
 	res.setHeader("Content-Type", "x-osu-replay");
 	res.setHeader("Content-disposition", `attachment; filename=${id}.osr`);
 	res.send(fileBuffer);
