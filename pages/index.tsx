@@ -22,7 +22,7 @@ export default function Home({ session }): React.ReactElement {
 
 			setReplayFound(true);
 
-			fetch(`http://localhost:3000/api/replays/${code}`)
+			fetch(`http://osureplays.net/api/replays/${code}`)
 				.then((res) => res.json())
 				.then((replay: IReplay) => {
 					if (replay.error && replay.error == 404) {
