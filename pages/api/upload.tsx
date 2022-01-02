@@ -30,9 +30,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				return session.user.id + time;
 			},
 			keepExtensions: true,
-			maxFileSize: 2 * 1024 * 1024
+			maxFileSize: 2 * 1024 * 1024,
+			allowEmptyFiles: false
 		});
 
+		// TODO: Check if there are no files
 		form.parse(req, async (err, fields, files) => {
 			const file = files["file"];
 
