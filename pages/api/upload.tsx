@@ -36,6 +36,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		// TODO: Check if there are no files
 		form.parse(req, async (err, fields, files) => {
+			if (!files || !files["file"]) {
+				res.status(400).json({ error: 400, message: "Missing replay file" });
+				return;
+			}
+
 			const file = files["file"];
 
 			const replay = osr.readSync((file as any).filepath);
@@ -43,7 +48,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			const playerName = replay.playerName;
 
 			if (playerName !== session.user.name) {
-				res.status(403).json({ error: 404, message: "Replay not created by you (username does not match)." });
+				res.status(403).json({ error: 403, message: "Replay not created by you (username does not match)." });
 				return;
 			}
 
@@ -65,6 +70,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			).json();
 
 			// TODO: user input for password public and custom pp and watch link
+
+			console.log(beatmap);
+
+			if (replay.authentication && replay.authentication == "basic") {
+				// Something went wrong with authentication.
+				res.status(401);
+				res.redirect("/signout");
+				return;
+			}
 
 			const replayObject = {
 				ID: session.user.id + beatmap.id + time,

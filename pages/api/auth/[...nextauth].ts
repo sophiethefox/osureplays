@@ -51,7 +51,7 @@ export default NextAuth({
 		async session({ session, user, token }) {
 			(session as ISession).user.id = token.sub;
 			session.accessToken = token.accessToken;
-			console.log(session);
+			// console.log(session);
 			return session;
 		}
 	}
