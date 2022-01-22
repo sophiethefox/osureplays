@@ -48,6 +48,10 @@ export default function Code({
 
 	return (
 		<>
+			<head>
+				<meta name="description" content={("Replay #" + replay.ID) as string} />
+				<meta property="og:description" content={("Replay #" + replay.ID) as string} />
+			</head>
 			<Layout>
 				<Row>
 					<h4>

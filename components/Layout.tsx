@@ -20,6 +20,8 @@ export default function Layout({ children }) {
 			<Head>
 				<title>osu! Replays</title>
 				<link rel="icon" href="/favicon.ico" />
+				<meta name="title" content="osu! Replays" />
+				<meta property="og:title" content="osu! Replays" />
 			</Head>
 			<Container style={{ borderBottom: "1px solid #E7E7E7" }}>
 				<Navbar>
